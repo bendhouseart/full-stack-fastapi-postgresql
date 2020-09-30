@@ -8,7 +8,7 @@ output "dhcp_ip" {
 }
 
 output "public_ip" {
-  //  value = join("", aws_eip_association.main_ip.*.public_ip)
+  //value = join("", aws_eip_association.main_ip.*.public_ip)
   value = var.public_ip
 }
 
@@ -26,4 +26,8 @@ output "instance_id" {
 
 output "key_name" {
   value = join("", aws_key_pair.this.*.key_name)
+}
+
+output "key" {
+  value = aws_key_pair.this.*.id[count.index]
 }

@@ -1,7 +1,9 @@
 resource "random_pet" "this" {}
 
 data "aws_caller_identity" "this" {}
-
+provider "aws" {
+  region = var.AWS_REGION
+}
 module "ami" {
   source = "github.com/insight-infrastructure/terraform-aws-ami.git?ref=v0.1.0"
 }
@@ -48,7 +50,6 @@ resource "aws_instance" "this" {
 
   subnet_id              = var.subnet_id
   vpc_security_group_ids = compact(concat(aws_security_group.this.*.id, var.additional_security_group_ids))
-
   iam_instance_profile = var.iam_instance_profile
   key_name             = var.public_key_path == "" ? var.key_name : aws_key_pair.this.*.key_name[0]
 

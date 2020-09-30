@@ -1,5 +1,0 @@
-iam_instance_profile = "squarepeg"
-network_name = "myvpc"
-private_key_path = "mykey"
-public_key_path = "mykey.pub"
-AWS_REGION = "us-west-2"

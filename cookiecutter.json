@@ -40,5 +40,20 @@
         "frontend/src/**/*.vue",
         "frontend/node_modules/*",
         "backend/app/app/email-templates/**"
-    ]
+    ],
+
+    "aws_region": "us-west-2",
+    "eks_cluster_name": "mycluster",
+    "vpc_name": "myvpc",
+    "azs": "",
+    "num_azs": "1",
+
+    "iam_instance_profile": "",
+    "network_name": "",
+    "private_key_path": "",
+    "public_key_path": "",
+    "create_sg": "false",
+    "create": "true",
+    "create_ebs_volume": "false",
+    "domain_name": ""
 }
