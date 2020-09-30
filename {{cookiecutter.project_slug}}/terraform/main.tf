@@ -20,12 +20,12 @@ locals {
 }
 
 // Option 1
-data "template_file" "this" {
-  template = file("${path.module}/user-data.sh")
-  vars = {
-    foo = "bar"
-  }
-}
+//data "template_file" "this" {
+  //template = file("${path.module}/user-data.sh")
+  //vars = {
+   // foo = "bar"
+  //}
+//}
 
 //// Option 2
 //resource "template_cloudinit_config" "this" {
@@ -44,11 +44,7 @@ resource "aws_instance" "this" {
   }
 
 //  Important
-  user_data = data.template_file.this.rendered
-
-  provisioner "file" {
-
-  }
+  user_data = data.template_cloudinit_config.cloud-init-config.rendered
 
   subnet_id              = var.subnet_id
   vpc_security_group_ids = compact(concat(aws_security_group.this.*.id, var.additional_security_group_ids))

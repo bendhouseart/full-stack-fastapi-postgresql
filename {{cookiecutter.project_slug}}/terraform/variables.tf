@@ -1,3 +1,14 @@
+locals {
+  instance_store_enabled = "false"
+}
+
+variable "AWS_REGION" {
+  description = "region for aws zone"
+  type = string
+  default = "us-west-2"
+}
+
+
 variable "create" {
   description = "Boolean to create resources or not"
   type        = bool
@@ -173,7 +184,7 @@ variable "ebs_volume_type" {
   default     = "gp2"
 }
 
-variable "ebs_volome_iops" {
+variable "ebs_volume_iops" {
   description = ""
   type        = string
   default     = null
@@ -229,17 +240,18 @@ variable "keystore_password" {
 //  type = string
 //}
 
+variable "instance_store_enabled" {
+  type = bool
+  default = false
+}
+
 variable "associate_eip" {
   description = "Boolean to determine if you should associate the ip when the instance has been configured"
   type        = bool
   default     = true
 }
 
-//variable "private_key_path" {
-//  description = "Path to the private ssh key"
-//  type        = string
-//  default     = ""
-//}
+
 //
 //variable "playbook_file_path" {
 //  description = "The path to the playbook"

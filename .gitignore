@@ -6,3 +6,7 @@ dev-link/
 
 .idea/
 Pipfile*
+
+mykey*
+.terraform/
+*tfstate*
