@@ -28,6 +28,6 @@ output "key_name" {
   value = join("", aws_key_pair.this.*.key_name)
 }
 
-output "key" {
-  value = aws_key_pair.this.*.id[count.index]
-}
+//output "key" {
+//  value = aws_key_pair.this.*.id[count.index]
+//}
