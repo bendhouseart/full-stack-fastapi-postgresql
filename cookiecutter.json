@@ -44,16 +44,19 @@
 
     "aws_region": "us-west-2",
     "eks_cluster_name": "mycluster",
+    "eks_num_workers": "1",
+    "eks_cluster_autoscale": "false",
+    "eks_cluster_autoscale_min_workers": "1",
+    "eks_cluster_autoscale_max_workers": "1",
     "vpc_name": "myvpc",
-    "azs": "",
+    "azs": "1",
     "num_azs": "1",
 
-    "iam_instance_profile": "",
-    "network_name": "",
-    "private_key_path": "",
-    "public_key_path": "",
+    "iam_instance_profile": "\"\"",
+    "network_name": "\"\"",
+    "private_key_path": "\"\"",
+    "public_key_path": "\"\"",
     "create_sg": "false",
     "create": "true",
-    "create_ebs_volume": "false",
-    "domain_name": ""
+    "create_ebs_volume": "false"
 }
