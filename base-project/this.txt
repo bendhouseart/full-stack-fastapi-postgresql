@@ -1,0 +1,1 @@
+/home/anthony/Insight/full-stack-fastapi-postgresql

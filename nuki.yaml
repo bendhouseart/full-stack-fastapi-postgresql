@@ -1,0 +1,201 @@
+
+
+project_name:
+  type: input
+  message: What to set
+  default: Base Project
+
+project_slug:
+  type: input
+  message: What to set
+  default: "{{ nuki.project_name|lower|replace(' ', '-') }}"
+domain_main:
+  type: input
+  message: What to set
+  default: "{{nuki.project_slug}}"
+domain_staging:
+  type: input
+  message: What to set
+  default: stag.{{nuki.domain_main}}
+docker_swarm_stack_name_main:
+  type: input
+  message: What to set
+  default: "{{nuki.domain_main|replace('.', '-')}}"
+docker_swarm_stack_name_staging:
+  type: input
+  message: What to set
+  default: "{{nuki.domain_staging|replace('.', '-')}}"
+secret_key:
+  type: input
+  message: What to set
+  default: changethis
+first_superuser:
+  type: input
+  message: What to set
+  default: "admin@{{nuki.domain_main}}"
+first_superuser_password:
+  type: input
+  message: What to set
+  default: changethis
+backend_cors_origins:
+  type: stat
+  input: '["http://localhost", "http://localhost:4200", "http://localhost:3000",
+  "http://localhost:8080", "https://localhost", "https://localhost:4200", "https://localhost:3000",
+  "https://localhost:8080", "http://dev.{{nuki.domain_main}}", "https://{{nuki.domain_staging}}",
+  "https://{{nuki.domain_main}}", "http://local.dockertoolbox.tiangolo.com",
+  "http://localhost.tiangolo.com"]'
+smtp_port:
+  type: input
+  message: What to set
+  default: '587'
+smtp_host:
+  type: input
+  message: What to set
+  default: ''
+smtp_user:
+  type: input
+  message: What to set
+  default: ''
+smtp_password:
+  type: input
+  message: What to set
+  default: ''
+smtp_emails_from_email:
+  type: input
+  message: What to set
+  default: "info@{{nuki.domain_main}}"
+postgres_password:
+  type: input
+  message: What to set
+  default: changethis
+pgadmin_default_user:
+  type: input
+  message: What to set
+  default: "{{nuki.first_superuser}}"
+pgadmin_default_user_password:
+  type: input
+  message: What to set
+  default: "{{nuki.first_superuser_password}}"
+traefik_constraint_tag:
+  type: input
+  message: What to set
+  default: "{{nuki.domain_main}}"
+traefik_constraint_tag_staging:
+  type: input
+  message: What to set
+  default: "{{nuki.domain_staging}}"
+traefik_public_constraint_tag:
+  type: input
+  message: What to set
+  default: traefik-public
+flower_auth:
+  type: input
+  message: What to set
+  default: "admin:{{nuki.first_superuser_password}}"
+
+sentry_dsn:
+  type: input
+  message: What to set
+docker_image_prefix:
+  type: input
+  message: What to set
+
+docker_image_backend:
+  type: input
+  message: What to set
+  default: "{{nuki.docker_image_prefix}}backend"
+docker_image_celeryworker:
+  type: input
+  message: What to set
+  default: "{{nuki.docker_image_prefix}}celeryworker"
+docker_image_frontend:
+  type: input
+  message: What to set
+  default: "{{nuki.docker_image_prefix}}frontend"
+_copy_without_render:
+  - frontend/src/**/*.html
+  - frontend/src/**/*.vue
+  - frontend/node_modules/*
+  - backend/app/app/email-templates/**
+
+
+
+aws_region:
+  type: input
+  message: What to set
+  default: us-west-2
+eks_cluster_name:
+  type: input
+  message: What to set
+  default: mycluster
+eks_num_workers:
+  type: input
+  message: What to set
+  default: '1'
+eks_cluster_autoscale:
+  type: input
+  message: What to set
+  default: 'false'
+eks_cluster_autoscale_min_workers:
+  type: input
+  message: What to set
+  default: '1'
+eks_cluster_autoscale_max_workers:
+  type: input
+  message: What to set
+  default: '1'
+vpc_name:
+  type: input
+  message: What to set
+  default: myvpc
+azs:
+  type: input
+  message: What to set
+  default: '1'
+num_azs:
+  type: input
+  message: What to set
+  default: '1'
+iam_instance_profile:
+  type: input
+  message: What to set
+network_name:
+  type: input
+  message: What to set
+private_key_path:
+  type: input
+  message: What to set
+public_key_path:
+  type: input
+  message: What to set
+create_sg:
+  type: input
+  message: What to set
+  default: 'false'
+create:
+  type: input
+  message: What to set
+  default: 'true'
+create_ebs_volume:
+  type: input
+  message: What to set
+  default: 'false'
+
+render:
+  type: nukikata
+  context_file: cookiecutter.json
+  context_key: cookiecutter
+  existing_context: "{{ nuki }}"
+  no_input: true
+
+post_render_action_:
+  type: checkbox
+  message: What do you want to do next?
+  choices:
+    - deploy: Deploy the instance?
+
+deploy_:
+  type: command
+  chdir: "{{ calling_directory }}"
+  command: "cd {{ nuki.project_slug }} && echo '{{ calling_directory }}' >> this.txt"
+

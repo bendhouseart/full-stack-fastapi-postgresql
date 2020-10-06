@@ -5,7 +5,7 @@ declare -A exclude_list=()
 count=0
 while read line;
 do 
-   if [[ $line != "" ]]; then
+   if [ $line != ""  ] || [ $line != ".env"]; then
    echo ${line}
    exclude_list[$count]=$line
    ((count+=1))
@@ -28,6 +28,6 @@ top_of_dir="../../{{cookiecutter.project_slug}}"
 
 
 # conversly, just pass the gitignore file straight to rsync
-rysnc_command="rsync -avr --exclude-from{'../../.gitignore'} ../../{{cookiecutter.project_slug}} ../../deployments"
+rysnc_command="rsync -avr ${ignore_string} ../../{{cookiecutter.project_slug}} ../../deployments"
 echo $rysnc_command
 

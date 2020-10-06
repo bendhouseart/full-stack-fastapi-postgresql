@@ -1,7 +1,7 @@
 {
     "project_name": "Base Project",
     "project_slug": "{{ cookiecutter.project_name|lower|replace(' ', '-') }}",
-    "domain_main": "{{cookiecutter.project_slug}}.com",
+    "domain_main": "{{cookiecutter.project_slug}}",
     "domain_staging": "stag.{{cookiecutter.domain_main}}",
 
     "docker_swarm_stack_name_main": "{{cookiecutter.domain_main|replace('.', '-')}}",
@@ -52,10 +52,10 @@
     "azs": "1",
     "num_azs": "1",
 
-    "iam_instance_profile": "\"\"",
-    "network_name": "\"\"",
-    "private_key_path": "\"\"",
-    "public_key_path": "\"\"",
+    "iam_instance_profile": "",
+    "network_name": "",
+    "private_key_path": "",
+    "public_key_path": "",
     "create_sg": "false",
     "create": "true",
     "create_ebs_volume": "false"
