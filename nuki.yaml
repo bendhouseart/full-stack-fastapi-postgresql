@@ -2,41 +2,51 @@
 
 project_name:
   type: input
-  message: What to set
+  message: Choose a base name for this project
   default: Base Project
-
 project_slug:
   type: input
-  message: What to set
+  message: Choose a project slug
   default: "{{ nuki.project_name|lower|replace(' ', '-') }}"
+
 domain_main:
   type: input
-  message: What to set
+  message: Enter a domain name if different from the project slug
   default: "{{nuki.project_slug}}"
 domain_staging:
   type: input
-  message: What to set
+  message: Enter a domain for staging
   default: stag.{{nuki.domain_main}}
+
+# docker swarm
+docker_swarm_setup:
+  type: confirm
+  message: Do you want to customize docker swarm
+
 docker_swarm_stack_name_main:
+  when: "{{ nuki.docker_swarm_setup }}"
   type: input
-  message: What to set
+  message: Enter a name for the docker swarm
   default: "{{nuki.domain_main|replace('.', '-')}}"
 docker_swarm_stack_name_staging:
+  when: "{{ nuki.docker_swarm_setup  }}"
   type: input
-  message: What to set
-  default: "{{nuki.domain_staging|replace('.', '-')}}"
+  message: Enter a name for the docker swarm staging
+  default: "{{ nuki.domain_staging | replace('.', '-') }}"
+
 secret_key:
   type: input
-  message: What to set
+  message: Enter a value for the secret key for this project
   default: changethis
 first_superuser:
   type: input
-  message: What to set
+  message: Enter the name of the super user for the site
   default: "admin@{{nuki.domain_main}}"
 first_superuser_password:
   type: input
-  message: What to set
+  message: Enter a password for this super user
   default: changethis
+
 backend_cors_origins:
   type: stat
   input: '["http://localhost", "http://localhost:4200", "http://localhost:3000",
@@ -44,74 +54,105 @@ backend_cors_origins:
   "https://localhost:8080", "http://dev.{{nuki.domain_main}}", "https://{{nuki.domain_staging}}",
   "https://{{nuki.domain_main}}", "http://local.dockertoolbox.tiangolo.com",
   "http://localhost.tiangolo.com"]'
+
+# email settings
+setup_email:
+  type: confirm
+  message: Do you want to set up email w/ an smtp server?
+
 smtp_port:
+  when: "{{ nuki.setup_email }}"
   type: input
-  message: What to set
+  message: Enter a port for stmp
   default: '587'
 smtp_host:
+  when: "{{ nuki.setup_email  }}"
   type: input
-  message: What to set
+  message: Enter a host for stmp
   default: ''
 smtp_user:
+  when: "{{ nuki.setup_email }}"
   type: input
-  message: What to set
+  message: Enter a user for stmp
   default: ''
 smtp_password:
+  when: "{{ nuki.setup_email }}"
   type: input
   message: What to set
   default: ''
 smtp_emails_from_email:
+  when: "{{ nuki.setup_email }}"
   type: input
-  message: What to set
+  message: Enter a default email to deliver from
   default: "info@{{nuki.domain_main}}"
+
+# postgres setup
 postgres_password:
   type: input
-  message: What to set
+  message: Enter a password for postgres
   default: changethis
 pgadmin_default_user:
   type: input
-  message: What to set
+  message: Enter a user for pgadmin
   default: "{{nuki.first_superuser}}"
 pgadmin_default_user_password:
   type: input
-  message: What to set
+  message: Enter a password for pgadmin
   default: "{{nuki.first_superuser_password}}"
+
+# traffic setup
+traefik_setup:
+  type: confirm
+  message: Do you want to setup traefik?
 traefik_constraint_tag:
+  when: "{{ nuki.traefik_setup}}"
   type: input
-  message: What to set
+  message: Enter a traefik constraint tag
   default: "{{nuki.domain_main}}"
 traefik_constraint_tag_staging:
+  when: "{{ nuki.traefik_setup}}"
   type: input
-  message: What to set
+  message: Enter a domain for traefik staging
   default: "{{nuki.domain_staging}}"
 traefik_public_constraint_tag:
+  when: "{{ nuki.traefik_setup}}"
   type: input
-  message: What to set
+  message: Enter a public tag for traefik
   default: traefik-public
 flower_auth:
   type: input
-  message: What to set
+  message: Enter a flower admin and password
   default: "admin:{{nuki.first_superuser_password}}"
 
 sentry_dsn:
   type: input
-  message: What to set
-docker_image_prefix:
-  type: input
-  message: What to set
+  message: Enter dsn for sentry
 
-docker_image_backend:
+#########################################################
+# docker prefixes, first option is a select to ignore.
+docker_prefixes:
+  type: confirm
+  message: Do you want to attach any prefixes to your docker images?
+docker_image_prefix:
+  when: "{{ nuki.docker_prefixes > 0}}"
   type: input
-  message: What to set
+  message: Enter prefix for docker image
+docker_image_backend:
+  when: "{{ nuki.docker_prefixes > 0 }}"
+  type: input
+  message: Enter prefix for docker image backend
   default: "{{nuki.docker_image_prefix}}backend"
 docker_image_celeryworker:
+  when: "{{ nuki.docker_prefixes > 0 }}"
   type: input
-  message: What to set
+  message: Enter prefix for celery worker
   default: "{{nuki.docker_image_prefix}}celeryworker"
 docker_image_frontend:
+  when: "{{ nuki.docker_prefixes > 0 }}"
   type: input
-  message: What to set
+  message: Enter Prefix for docker image frontend
   default: "{{nuki.docker_image_prefix}}frontend"
+###########################################################
 _copy_without_render:
   - frontend/src/**/*.html
   - frontend/src/**/*.vue
@@ -122,63 +163,74 @@ _copy_without_render:
 
 aws_region:
   type: input
-  message: What to set
+  message: What AWS region?
   default: us-west-2
+############################################################3
+# optional set up eks
+setup_eks:
+  type: confirm
+  message: Do you want to set up an EKS cluster?
 eks_cluster_name:
+  when: "{{ nuki.setup_eks }}"
   type: input
-  message: What to set
+  message: What do you want to name your eks cluster?
   default: mycluster
 eks_num_workers:
+  when: "{{ nuki.setup_eks }}"
   type: input
-  message: What to set
+  message: Number of workers on cluster?
   default: '1'
 eks_cluster_autoscale:
+  when: "{{ nuki.setup_eks }}"
   type: input
-  message: What to set
+  message: Autoscale workers? Enter either true or false
   default: 'false'
 eks_cluster_autoscale_min_workers:
+  when: "{{ nuki.setup_eks }}"
   type: input
-  message: What to set
+  message: Enter minimum number of workers
   default: '1'
 eks_cluster_autoscale_max_workers:
+  when: "{{ nuki.setup_eks }}"
   type: input
-  message: What to set
+  message: Enter maximum number of workers
   default: '1'
+############################################# end eks setup
 vpc_name:
   type: input
-  message: What to set
-  default: myvpc
+  message: Enter name of VPC otherwise leave blank for none
+  default: ""
 azs:
   type: input
-  message: What to set
+  message: Number of azs
   default: '1'
 num_azs:
   type: input
-  message: What to set
+  message: Again number of azs, this needs to be worded better
   default: '1'
 iam_instance_profile:
   type: input
-  message: What to set
+  message: iam_instance_profile to use
 network_name:
   type: input
-  message: What to set
+  message: Network name
 private_key_path:
   type: input
-  message: What to set
+  message: Path to private sshkey
 public_key_path:
   type: input
-  message: What to set
+  message: Path to public sshkey
 create_sg:
   type: input
-  message: What to set
+  message: Create a security group?
   default: 'false'
 create:
   type: input
-  message: What to set
+  message: Create a deployment
   default: 'true'
 create_ebs_volume:
   type: input
-  message: What to set
+  message: Create an EBS volume for this deployment (enter true or false)
   default: 'false'
 
 render:
@@ -194,8 +246,30 @@ post_render_action_:
   choices:
     - deploy: Deploy the instance?
 
-deploy_:
+
+# this is dope, note all paths are absolute in nuki so as long as we have
+# access to calling directory we can go anywhere and do anything
+# process for demo should be cd to project dir, clone this repo, it sets itself up
+# later set up deployment using command functions as below.
+deploy_example_:
   type: command
   chdir: "{{ calling_directory }}"
   command: "cd {{ nuki.project_slug }} && echo '{{ calling_directory }}' >> this.txt"
 
+
+
+deploy_eks_:
+  type: command
+  chdir: "{{ calling_directory }}"
+  command: "cd {{ nuki.project_slug }}  && echo 'executing deploy_eks_command' >> eks.txt"
+
+
+deploy_single_:
+  type: command
+  chdir: "{{ calling_directory }}"
+  command: "cd {{ nuki.project_slug }}  && echo 'executing deploy_single_command' >> single.txt"
+
+deploy_local_:
+  type: command
+  chdir: "{{ calling_directory }}"
+  command: "cd {{ nuki.project_slug }} && echo 'executing deploy_local_command' >> local.txt"
