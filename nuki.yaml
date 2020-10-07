@@ -12,7 +12,7 @@ project_slug:
 domain_main:
   type: input
   message: Enter a domain name if different from the project slug
-  default: "{{nuki.project_slug}}"
+  default: ""
 domain_staging:
   type: input
   message: Enter a domain for staging
@@ -235,7 +235,7 @@ create_ebs_volume:
 
 render:
   type: nukikata
-  context_file: cookiecutter.json
+  #context_file: cookiecutter.json
   context_key: cookiecutter
   existing_context: "{{ nuki }}"
   no_input: true
@@ -273,3 +273,7 @@ deploy_local_:
   type: command
   chdir: "{{ calling_directory }}"
   command: "cd {{ nuki.project_slug }} && echo 'executing deploy_local_command' >> local.txt"
+
+debug:
+  type: pprint
+  statement: "{{ nuki }}"
