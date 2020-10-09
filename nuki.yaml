@@ -196,39 +196,54 @@ eks_cluster_autoscale_max_workers:
   message: Enter maximum number of workers
   default: '1'
 ############################################# end eks setup
+
+# aws network setup
+
+aws_network_setup:
+  type: confirm
+  message: Do you want to set up or connect to existing AWS infrastructure?
+  default: false
+
+print_network_setup_bool:
+  type: pprint
+  statement:
+
+
 vpc_name:
+  when: "{{ nuki.aws_network_setup }}"
   type: input
   message: Enter name of VPC otherwise leave blank for none
   default: ""
 azs:
+  when: "{{ nuki.aws_network_setup }}"
   type: input
   message: Number of azs
   default: '1'
 num_azs:
+  when: "{{ nuki.aws_network_setup }}"
   type: input
   message: Again number of azs, this needs to be worded better
   default: '1'
 iam_instance_profile:
+  when: "{{ nuki.aws_network_setup }}"
   type: input
   message: iam_instance_profile to use
 network_name:
+  when: "{{ nuki.aws_network_setup }}"
   type: input
   message: Network name
-private_key_path:
-  type: input
-  message: Path to private sshkey
-public_key_path:
-  type: input
-  message: Path to public sshkey
 create_sg:
+  when: "{{ nuki.aws_network_setup }}"
   type: input
   message: Create a security group?
   default: 'false'
 create:
+  when: "{{ nuki.aws_network_setup }}"
   type: input
   message: Create a deployment
   default: 'true'
 create_ebs_volume:
+  when: "{{ nuki.aws_network_setup }}"
   type: input
   message: Create an EBS volume for this deployment (enter true or false)
   default: 'false'
@@ -278,17 +293,10 @@ post_render_action_:
 prompt_user_to_enter_ssh_keys:
   type: confirm
   message: Confirm if you're ready to create new ssh keys
-  default: yes
 
 generate_ssh_keys_:
-  when: "{{ nuki.prompt_user_to_enter_ssh_keys and nuki.  }}"
+  when: "{{ nuki.prompt_user_to_enter_ssh_keys and nuki.ssh_key_name  }}"
   type: command
   message: creating ssh keys
   chdir: "{{ calling_directory}}"
   command: "cd {{ nuki.project_slug }} && ssh-keygen -t rsa -f {{ nuki.ssh_key_name }} -q -N ''"
-
-# cleans up the project file, used during debugging.
-delete_project_:
-  when: "{{ nuki.clean_up }}"
-  type: command
-  chdir: "{{ calling_directory }}
