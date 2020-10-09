@@ -1,5 +1,4 @@
-
-
+---
 project_name:
   type: input
   message: Choose a base name for this project
@@ -17,6 +16,11 @@ domain_staging:
   type: input
   message: Enter a domain for staging
   default: stag.{{nuki.domain_main}}
+
+ssh_key_name:
+  type: input
+  message: Enter a name for a new sshkey to log in to your instance
+  default: mykey
 
 # docker swarm
 docker_swarm_setup:
@@ -101,32 +105,28 @@ pgadmin_default_user_password:
   default: "{{nuki.first_superuser_password}}"
 
 # traffic setup
-traefik_setup:
-  type: confirm
-  message: Do you want to setup traefik?
 traefik_constraint_tag:
-  when: "{{ nuki.traefik_setup}}"
   type: input
   message: Enter a traefik constraint tag
   default: "{{nuki.domain_main}}"
 traefik_constraint_tag_staging:
-  when: "{{ nuki.traefik_setup}}"
   type: input
   message: Enter a domain for traefik staging
   default: "{{nuki.domain_staging}}"
 traefik_public_constraint_tag:
-  when: "{{ nuki.traefik_setup}}"
   type: input
   message: Enter a public tag for traefik
   default: traefik-public
+
 flower_auth:
   type: input
-  message: Enter a flower admin and password
+  message: Enter a flower admin and password in the form 'user:password'
   default: "admin:{{nuki.first_superuser_password}}"
 
 sentry_dsn:
   type: input
-  message: Enter dsn for sentry
+  message: Enter dsn for sentry, example is default, you can set up a free account
+  default: https://1234abcd:5678ef@sentry.example.com/30
 
 #########################################################
 # docker prefixes, first option is a select to ignore.
@@ -235,7 +235,7 @@ create_ebs_volume:
 
 render:
   type: nukikata
-  context_file: cookiecutter.json
+  context_file: nukikata.yaml
   context_key: cookiecutter
   existing_context: "{{ nuki }}"
   no_input: true
@@ -251,25 +251,44 @@ post_render_action_:
 # access to calling directory we can go anywhere and do anything
 # process for demo should be cd to project dir, clone this repo, it sets itself up
 # later set up deployment using command functions as below.
-deploy_example_:
+#deploy_example_:
+#  type: command
+#  chdir: "{{ calling_directory }}"
+#  #command: "cd {{ nuki.project_slug }} && echo '{{ calling_directory }}' >> this.txt"
+#
+#
+#
+#deploy_eks_:
+#  type: command
+#  chdir: "{{ calling_directory }}"
+#  #command: "cd {{ nuki.project_slug }}  && echo 'executing deploy_eks_command' >> eks.txt"
+#
+#
+#deploy_single_:
+#  type: command
+#  chdir: "{{ calling_directory }}"
+#  #command: "cd {{ nuki.project_slug }}  && echo 'executing deploy_single_command' >> single.txt"
+#
+#deploy_local_:
+#  type: command
+#  chdir: "{{ calling_directory }}"
+#  #command: "cd {{ nuki.project_slug }} && echo 'executing deploy_local_command' >> local.txt"
+
+
+prompt_user_to_enter_ssh_keys:
+  type: confirm
+  message: Confirm if you're ready to create new ssh keys
+  default: yes
+
+generate_ssh_keys_:
+  when: "{{ nuki.prompt_user_to_enter_ssh_keys and nuki.  }}"
   type: command
-  chdir: "{{ calling_directory }}"
-  command: "cd {{ nuki.project_slug }} && echo '{{ calling_directory }}' >> this.txt"
+  message: creating ssh keys
+  chdir: "{{ calling_directory}}"
+  command: "cd {{ nuki.project_slug }} && ssh-keygen -t rsa -f {{ nuki.ssh_key_name }} -q -N ''"
 
-
-
-deploy_eks_:
+# cleans up the project file, used during debugging.
+delete_project_:
+  when: "{{ nuki.clean_up }}"
   type: command
-  chdir: "{{ calling_directory }}"
-  command: "cd {{ nuki.project_slug }}  && echo 'executing deploy_eks_command' >> eks.txt"
-
-
-deploy_single_:
-  type: command
-  chdir: "{{ calling_directory }}"
-  command: "cd {{ nuki.project_slug }}  && echo 'executing deploy_single_command' >> single.txt"
-
-deploy_local_:
-  type: command
-  chdir: "{{ calling_directory }}"
-  command: "cd {{ nuki.project_slug }} && echo 'executing deploy_local_command' >> local.txt"
+  chdir: "{{ calling_directory }}

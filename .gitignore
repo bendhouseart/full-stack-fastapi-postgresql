@@ -6,7 +6,7 @@ dev-link/
 
 .idea/
 Pipfile*
-
+*project/
 base-project
 
 mykey*
