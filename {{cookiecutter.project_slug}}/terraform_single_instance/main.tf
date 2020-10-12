@@ -44,6 +44,10 @@ resource "aws_instance" "this" {
     volume_type = var.root_volume_type
     iops        = var.root_iops
   }
+  // first creating copy of code into deployment folden
+  provisioner "local-exec" {
+    command = "bash ../scripts/copy-to-deployment.sh"
+  }
 
   // copying over source code to instance
   provisioner "file" {
